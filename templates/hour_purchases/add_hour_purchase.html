@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Record Hour Purchase - {{ client.name }}{% endblock %}
+
+{% block content %}
+  <h1>Record Hour Purchase for {{ client.name }}</h1>
+  <form method="POST" action="{{ url_for('add_hour_purchase', client_id=client.id) }}">
+    <div class="mb-3">
+      <label for="hours_purchased" class="form-label">Hours Purchased <span class="text-danger">*</span></label>
+      <input type="number" step="0.1" class="form-control" id="hours_purchased" name="hours_purchased" required value="1.0">
+    </div>
+    <div class="mb-3">
+      <label for="purchase_date" class="form-label">Purchase Date <span class="text-danger">*</span></label>
+      <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ today_date }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="invoice_reference" class="form-label">Invoice Reference / Notes</label>
+      <textarea class="form-control" id="invoice_reference" name="invoice_reference" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Record Purchase</button>
+    <a href="{{ url_for('view_client', client_id=client.id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}
