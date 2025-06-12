@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Add Contract - {{ client.name }}{% endblock %}
+{% block content %}
+  <h1>Add Contract for {{ client.name }}</h1>
+  <form method="POST" action="{{ url_for("add_contract", client_id=client.id) }}">
+    <div class="mb-3">
+      <label for="annual_fee" class="form-label">Annual Fee (&euro;)</label>
+      <input type="number" step="0.01" class="form-control" id="annual_fee" name="annual_fee" value="0.00">
+    </div>
+    <div class="mb-3">
+      <label for="contract_expiry_date" class="form-label">Contract Expiry Date</label>
+      <input type="date" class="form-control" id="contract_expiry_date" name="contract_expiry_date">
+    </div>
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="includes_call_out_fee" name="includes_call_out_fee" value="y" checked>
+      <label class="form-check-label" for="includes_call_out_fee">Includes Call-Out Fee</label>
+    </div>
+    <div class="mb-3">
+      <label for="min_chargeable_time" class="form-label">Minimum Chargeable Time (minutes)</label>
+      <select class="form-select" id="min_chargeable_time" name="min_chargeable_time">
+        <option value="15">15 minutes</option>
+        <option value="30" selected>30 minutes</option>
+        <option value="45">45 minutes</option>
+        <option value="60">60 minutes</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="call_out_time_if_not_included" class="form-label">Call-Out Time if Not Included (minutes)</label>
+      <select class="form-select" id="call_out_time_if_not_included" name="call_out_time_if_not_included">
+        <option value="15">15 minutes</option>
+        <option value="30" selected>30 minutes</option>
+        <option value="45">45 minutes</option>
+        <option value="60">60 minutes</option>
+        <option value="75">75 minutes</option>
+        <option value="90">90 minutes</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Add Contract</button>
+    <a href="{{ url_for("view_client", client_id=client.id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

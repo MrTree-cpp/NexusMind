@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}View Client: {{ client.name }} - NexusManager{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ client.name }}</h1>
+    <div>
+        <a href="{{ url_for('edit_client', client_id=client.id) }}" class="btn btn-primary btn-sm">Edit Client</a>
+        <a href="{{ url_for('list_clients') }}" class="btn btn-secondary btn-sm">Back to List</a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">Client Details</div>
+    <div class="card-body">
+      <p><strong>Email:</strong> {{ client.email if client.email else 'N/A' }}</p>
+      <p><strong>Initial Hours:</strong> {{ client.initial_hours }}</p>
+      <p><strong>Default Call-Out Time:</strong> {{ client.default_call_out_time }} minutes</p>
+      <p><strong>Notes:</strong></p>
+      <pre>{{ client.notes if client.notes else 'N/A' }}</pre>
+    </div>
+  </div>
+
+  <!-- Contracts Section -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>Contracts</span>
+      <a href="{{ url_for('add_contract', client_id=client.id) }}" class="btn btn-success btn-sm">Add New Contract</a>
+    </div>
+    <div class="card-body">
+      {% if client.contracts %}
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Annual Fee</th>
+              <th>Expires On</th>
+              <th>Includes Call-Out</th>
+              <th>Min. Charge</th>
+              <th>Call-Out Time (if not incl.)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contract in client.contracts | sort(attribute='id', reverse=True) %}
+              <tr>
+                <td>{{ contract.id }}</td>
+                <td>&euro;{{ '%.2f'|format(contract.annual_fee) if contract.annual_fee is not none else 'N/A' }}</td>
+                <td>{{ contract.contract_expiry_date.strftime('%Y-%m-%d') if contract.contract_expiry_date else 'N/A' }}</td>
+                <td>{{ 'Yes' if contract.includes_call_out_fee else 'No' }}</td>
+                <td>{{ contract.min_chargeable_time }} min</td>
+                <td>{{ contract.call_out_time_if_not_included }} min</td>
+                <td>
+                  <a href="{{ url_for('edit_contract', contract_id=contract.id) }}" class="btn btn-outline-primary btn-xs">Edit</a>
+                  <form action="{{ url_for('delete_contract', contract_id=contract.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this contract?');">
+                    <button type="submit" class="btn btn-outline-danger btn-xs">Del</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No contracts found for this client.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Hour Purchases Section -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>Hour Purchases</span>
+      <a href="{{ url_for('add_hour_purchase', client_id=client.id) }}" class="btn btn-info btn-sm">Record Hour Purchase</a>
+    </div>
+    <div class="card-body">
+      {% if client.hour_purchases %}
+        <table class="table table-sm table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Hours Purchased</th>
+              <th>Invoice/Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for purchase in client.hour_purchases | sort(attribute='purchase_date', reverse=True) %}
+              <tr>
+                <td>{{ purchase.purchase_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ purchase.hours_purchased }} h</td>
+                <td><pre style="margin-bottom:0; white-space: pre-wrap;">{{ purchase.invoice_reference if purchase.invoice_reference else '-' }}</pre></td>
+                <td>
+                  <form action="{{ url_for('delete_hour_purchase', purchase_id=purchase.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this hour purchase record?');">
+                    <button type="submit" class="btn btn-outline-danger btn-xs">Del</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No hour purchases recorded for this client yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+
+    </div>
+  </div>
+
+{% endblock %}

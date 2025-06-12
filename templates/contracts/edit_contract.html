@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Edit Contract - {{ client.name }}{% endblock %}
+{% block content %}
+  <h1>Edit Contract for {{ client.name }} (ID: {{ contract.id }})</h1>
+  <form method="POST" action="{{ url_for("edit_contract", contract_id=contract.id) }}">
+    <div class="mb-3">
+      <label for="annual_fee" class="form-label">Annual Fee (&euro;)</label>
+      <input type="number" step="0.01" class="form-control" id="annual_fee" name="annual_fee" value="{{ contract.annual_fee if contract.annual_fee is not none else 0.00 }}">
+    </div>
+    <div class="mb-3">
+      <label for="contract_expiry_date" class="form-label">Contract Expiry Date</label>
+      <input type="date" class="form-control" id="contract_expiry_date" name="contract_expiry_date" value="{{ contract.contract_expiry_date.strftime('%Y-%m-%d') if contract.contract_expiry_date }}">
+    </div>
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="includes_call_out_fee" name="includes_call_out_fee" value="y" {% if contract.includes_call_out_fee %}checked{% endif %}>
+      <label class="form-check-label" for="includes_call_out_fee">Includes Call-Out Fee</label>
+    </div>
+    <div class="mb-3">
+      <label for="min_chargeable_time" class="form-label">Minimum Chargeable Time (minutes)</label>
+      <select class="form-select" id="min_chargeable_time" name="min_chargeable_time">
+        {% for time_val in [15, 30, 45, 60] %}
+          <option value="{{ time_val }}" {% if contract.min_chargeable_time == time_val %}selected{% endif %}>{{ time_val }} minutes</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="call_out_time_if_not_included" class="form-label">Call-Out Time if Not Included (minutes)</label>
+      <select class="form-select" id="call_out_time_if_not_included" name="call_out_time_if_not_included">
+        {% for time_val in [15, 30, 45, 60, 75, 90] %}
+          <option value="{{ time_val }}" {% if contract.call_out_time_if_not_included == time_val %}selected{% endif %}>{{ time_val }} minutes</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{{ url_for("view_client", client_id=contract.client_id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

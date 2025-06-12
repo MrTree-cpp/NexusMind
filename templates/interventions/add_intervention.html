@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Log Intervention - {{ client.name }}{% endblock %}
+
+{% block content %}
+  <h1>Log Intervention for {{ client.name }}</h1>
+  <form method="POST" action="{{ url_for('add_intervention', client_id=client.id) }}">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="intervention_date" class="form-label">Intervention Date & Time <span class="text-danger">*</span></label>
+        <input type="datetime-local" class="form-control" id="intervention_date" name="intervention_date" value="{{ now_datetime }}" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="technician_name" class="form-label">Technician Name</label>
+        <input type="text" class="form-control" id="technician_name" name="technician_name" value="Default Tech"> {# Or load from user session later #}
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+      <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="time_spent_on_site" class="form-label">Time Spent (minutes, excluding travel) <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="time_spent_on_site" name="time_spent_on_site" placeholder="e.g., 60" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="form-check form-switch pt-4">
+            <input class="form-check-input" type="checkbox" role="switch" id="is_remote" name="is_remote" value="y">
+            <label class="form-check-label" for="is_remote">Remote Intervention (No Call-Out Fee)</label>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <p><strong>Note:</strong> Call-out time (if applicable and not remote) will be based on the client's default ({{ client.default_call_out_time }} min) or active contract terms. This will be calculated upon saving.</p>
+
+    <button type="submit" class="btn btn-warning">Log Intervention</button>
+    <a href="{{ url_for('view_client', client_id=client.id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}
